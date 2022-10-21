@@ -29,7 +29,7 @@ def parse_args():
                         help='Network name in inference/models')
     parser.add_argument('--input-size', type=int, default=224,
                         help='Input image size for the network')
-    parser.add_argument('--use-depth', type=int, default=1,
+    parser.add_argument('--use-depth', type=int, default=0,
                         help='Use Depth image for training (1/0)')
     parser.add_argument('--use-rgb', type=int, default=1,
                         help='Use RGB image for training (1/0)')
@@ -43,9 +43,9 @@ def parse_args():
                         help='Threshold for IOU matching')
 
     # Datasets
-    parser.add_argument('--dataset', type=str,
-                        help='Dataset Name ("cornell" or "jaquard")')
-    parser.add_argument('--dataset-path', type=str,
+    parser.add_argument('--dataset', type=str, default='fsim',
+                        help='Dataset Name ("cornell" or "jaquard" or "fsim")')
+    parser.add_argument('--dataset-path', type=str, default='./fsim_grasp_dataset_single',
                         help='Path to dataset')
     parser.add_argument('--split', type=float, default=0.9,
                         help='Fraction of data for training (remainder is validation)')
@@ -67,11 +67,11 @@ def parse_args():
                         help='Optmizer for the training. (adam or SGD)')
 
     # Logging etc.
-    parser.add_argument('--description', type=str, default='',
+    parser.add_argument('--description', type=str, default='fsim',
                         help='Training description')
     parser.add_argument('--logdir', type=str, default='logs/',
                         help='Log directory')
-    parser.add_argument('--vis', action='store_true',
+    parser.add_argument('--vis', type=bool, default=False, 
                         help='Visualise the training process')
     parser.add_argument('--cpu', dest='force_cpu', action='store_true', default=False,
                         help='Force code to run in CPU mode')
@@ -212,7 +212,7 @@ def run():
     dt = datetime.datetime.now().strftime('%y%m%d_%H%M')
     net_desc = '{}_{}'.format(dt, '_'.join(args.description.split()))
 
-    save_folder = os.path.join(args.logdir, net_desc)
+    save_folder = os.path.join('prediction', args.description, args.logdir)
     if not os.path.exists(save_folder):
         os.makedirs(save_folder)
     tb = tensorboardX.SummaryWriter(save_folder)

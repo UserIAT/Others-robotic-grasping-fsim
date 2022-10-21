@@ -106,6 +106,27 @@ class GraspRectangles:
         grs.scale(scale)
         return grs
 
+    @classmethod
+    def load_from_fsim_file(cls, fname):
+        """
+        Load grasp rectangles from a Fsim dataset grasp file.
+        :param fname: Path to text file.
+        :return: GraspRectangles()
+        """
+        grs = []
+        with open(fname) as f:
+            # Load 4 lines at a time, corners of bounding box.
+            for l in f:
+                l = [round(float(c)) for c in l.split(' ')[:8]]
+                try:
+                    gr = np.array((l)) # remove 'Grasp 0'
+                    grs.append(GraspRectangle(gr.reshape(4,2)[:, [1, 0]][[0,1,2,3], :]))
+                except ValueError:
+                    # Some files contain weird values.
+                    print ("bad value")
+                    continue
+        return cls(grs)
+
     def append(self, gr):
         """
         Add a grasp rectangle to this GraspRectangles object
@@ -424,7 +445,7 @@ def detect_grasps(q_img, ang_img, width_img=None, no_grasps=1):
     :param no_grasps: Max number of grasps to return
     :return: list of Grasps
     """
-    local_max = peak_local_max(q_img, min_distance=20, threshold_abs=0.2, num_peaks=no_grasps)
+    local_max = peak_local_max(q_img, min_distance=20, threshold_abs=0.05, num_peaks=no_grasps) # original is 0.2
 
     grasps = []
     for grasp_point_array in local_max:
