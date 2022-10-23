@@ -50,7 +50,9 @@ if dataset_name == 'Fsim':
                 # cmds.extend([train_cmd_current, test_cmd_current])
                 # cmds.extend([test_cmd_current])
 
-
+for cmd in cmds:
+    print(cmd)
+    
 for cmd in cmds:
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     for line in iter(p.stdout.readline, b''):
