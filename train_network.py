@@ -47,7 +47,7 @@ def parse_args():
                         help='Dataset Name ("cornell" or "jaquard" or "fsim")')
     parser.add_argument('--dataset-path', type=str, default='./fsim_grasp_dataset_single',
                         help='Path to dataset')
-    parser.add_argument('--split', type=float, default=0.9,
+    parser.add_argument('--split', type=float, default=0.8,
                         help='Fraction of data for training (remainder is validation)')
     parser.add_argument('--ds-shuffle', action='store_true', default=False,
                         help='Shuffle the dataset')
