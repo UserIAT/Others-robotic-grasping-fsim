@@ -111,10 +111,12 @@ saved_data/
 *.pyc
 
 cornell_grasp_dataset
+jacquard_grasp_dataset
 fsim_grasp_dataset_single
 fsim_grasp_dataset_multi
 
 logs
 prediction
+
 
 
