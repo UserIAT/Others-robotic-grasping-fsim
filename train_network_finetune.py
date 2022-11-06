@@ -6,7 +6,7 @@ now = datetime.now()
 current_time = now.strftime('%Y-%m%d-%H%M')
 import glob
 
-dataset_name = 'Fsim'
+dataset_name = 'Jacquard'
 
 if dataset_name == 'Fsim':
     scene_list = ['multi', 'single']
@@ -61,12 +61,13 @@ elif dataset_name == 'Jacquard':
     scene_list = ['Jacquard']
     modality_list = ['rgb', 'depth', 'rgb-d']
     train_cmd_base = 'python3 train_network.py --dataset=None --dataset-path=None --use-depth=None --use-rgb=None --split=None --ds-rotate=None\
-                                             --description=None '
+                                             --description=None --input-size=None'
     test_cmd_base = 'python3 eval_ggcnn.py --dataset=None --dataset-path=None --use-depth=None --use-rgb=None --split=None --ds-rotate=None\
-                                             --description=None '
+                                             --description=None --input-size=None'
     cmds = []
     for scene in scene_list:
         for modality in modality_list:
+            input_size = 300
             for fold in range(1):
                 version_name = os.path.join(current_time + '_' + scene, modality.upper(), 'Fold_' + str(fold))
                 use_rgb = None
@@ -86,8 +87,9 @@ elif dataset_name == 'Jacquard':
                                 '--dataset-path=None':'--dataset-path=' + dataset_dir,
                                 '--use-rgb=None':'--use-rgb=' + str(use_rgb),
                                 '--use-depth=None':'--use-depth=' + str(use_depth),
-                                '--split=None':'--split=0.8',
-                                '--ds-rotate=None':'--ds-rotate=' + str(fold * 0.2)}
+                                '--split=None':'--split=0.999',
+                                '--ds-rotate=None':'--ds-rotate=' + str(fold * 0.2),
+                                '--input-size=None':'--input-size=' + str(input_size)}
                 train_cmd_current = train_cmd_base
                 test_cmd_current = test_cmd_base
 
