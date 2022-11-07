@@ -10,6 +10,7 @@ from inference.post_process import post_process_output
 from utils.data import get_dataset
 from utils.dataset_processing import evaluation, grasp
 from utils.visualisation.plot import save_results
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.INFO)
 
@@ -18,23 +19,24 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Evaluate networks')
 
     # Network
-    parser.add_argument('--network', metavar='N', type=str, nargs='+',
+    # parser.add_argument('--network', metavar='N', type=str, nargs='+', default='2022-1103-1514_Jacquard/RGB/Fold_0/logs/epoch_40_iou_0.85',
+    parser.add_argument('--network', type=str, default=["./prediction/2022-1103-1514_Jacquard/RGB/Fold_0/logs/epoch_40_iou_0.85"],
                         help='Path to saved networks to evaluate')
-    parser.add_argument('--input-size', type=int, default=224,
+    parser.add_argument('--input-size', type=int, default=300,
                         help='Input image size for the network')
 
     # Dataset
-    parser.add_argument('--dataset', type=str,
+    parser.add_argument('--dataset', type=str, default='cornell',
                         help='Dataset Name ("cornell" or "jaquard")')
-    parser.add_argument('--dataset-path', type=str,
+    parser.add_argument('--dataset-path', type=str, default='cornell_grasp_dataset',
                         help='Path to dataset')
-    parser.add_argument('--use-depth', type=int, default=1,
+    parser.add_argument('--use-depth', type=int, default=0,
                         help='Use Depth image for evaluation (1/0)')
     parser.add_argument('--use-rgb', type=int, default=1,
                         help='Use RGB image for evaluation (1/0)')
     parser.add_argument('--augment', action='store_true',
                         help='Whether data augmentation should be applied')
-    parser.add_argument('--split', type=float, default=0.9,
+    parser.add_argument('--split', type=float, default=0.0,
                         help='Fraction of data for training (remainder is validation)')
     parser.add_argument('--ds-shuffle', action='store_true', default=False,
                         help='Shuffle the dataset')
@@ -48,13 +50,13 @@ def parse_args():
                         help='Number of grasps to consider per image')
     parser.add_argument('--iou-threshold', type=float, default=0.25,
                         help='Threshold for IOU matching')
-    parser.add_argument('--iou-eval', action='store_true',
+    parser.add_argument('--iou-eval', type=bool, default=True, 
                         help='Compute success based on IoU metric.')
-    parser.add_argument('--jacquard-output', action='store_true',
+    parser.add_argument('--jacquard-output', type=bool, default=False, 
                         help='Jacquard-dataset style output')
 
     # Misc.
-    parser.add_argument('--vis', action='store_true',
+    parser.add_argument('--vis', type=bool, default=False,
                         help='Visualise the network output')
     parser.add_argument('--cpu', dest='force_cpu', action='store_true', default=False,
                         help='Force code to run in CPU mode')
@@ -121,7 +123,8 @@ if __name__ == '__main__':
         start_time = time.time()
 
         with torch.no_grad():
-            for idx, (x, y, didx, rot, zoom) in enumerate(test_data):
+            pbar = tqdm(test_data)
+            for idx, (x, y, didx, rot, zoom) in enumerate(pbar):
                 xc = x.to(device)
                 yc = [yi.to(device) for yi in y]
                 lossd = net.compute_loss(xc, yc)
@@ -154,7 +157,8 @@ if __name__ == '__main__':
                         grasp_q_img=q_img,
                         grasp_angle_img=ang_img,
                         no_grasps=args.n_grasps,
-                        grasp_width_img=width_img
+                        grasp_width_img=width_img,
+                        index = str(idx),
                     )
 
         avg_time = (time.time() - start_time) / len(test_data)
