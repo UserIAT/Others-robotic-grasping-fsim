@@ -20,9 +20,9 @@ def parse_args():
 
     # Network
     # parser.add_argument('--network', metavar='N', type=str, nargs='+', default='2022-1103-1514_Jacquard/RGB/Fold_0/logs/epoch_40_iou_0.85',
-    parser.add_argument('--network', type=str, default=["./prediction/2022-1103-1514_Jacquard/RGB/Fold_0/logs/epoch_40_iou_0.85"],
+    parser.add_argument('--network', type=str, default=["./prediction/2022-1023-1548_single/rgb/single_rgb_Fold_0/logs/epoch_47_iou_0.97"],
                         help='Path to saved networks to evaluate')
-    parser.add_argument('--input-size', type=int, default=300,
+    parser.add_argument('--input-size', type=int, default=420,
                         help='Input image size for the network')
 
     # Dataset
@@ -36,7 +36,7 @@ def parse_args():
                         help='Use RGB image for evaluation (1/0)')
     parser.add_argument('--augment', action='store_true',
                         help='Whether data augmentation should be applied')
-    parser.add_argument('--split', type=float, default=0.0,
+    parser.add_argument('--split', type=float, default=0.8,
                         help='Fraction of data for training (remainder is validation)')
     parser.add_argument('--ds-shuffle', action='store_true', default=False,
                         help='Shuffle the dataset')
