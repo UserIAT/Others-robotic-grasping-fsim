@@ -22,11 +22,12 @@ def parse_args():
 
     # Network
     # parser.add_argument('--network', metavar='N', type=str, nargs='+', default='2022-1103-1514_Jacquard/RGB/Fold_0/logs/epoch_40_iou_0.85',
-    # parser.add_argument('--network', type=str, default=["./prediction/2022-1023-1548_single/rgb/single_rgb_Fold_0/logs/epoch_47_iou_0.97"])
-    parser.add_argument('--network', type=str, 
-                        default=[os.path.join(root_folder, f) for f in ["prediction/2022-1028-0008_multi/rgb/multi_rgb_Fold_0/logs/epoch_40_iou_0.67"]])
     # parser.add_argument('--network', type=str, 
-    #                     default=[os.path.join(root_folder, f) for f in ["prediction/2022-1103-1514_Jacquard/RGB/Fold_0/logs/epoch_40_iou_0.85"]])
+    #                     default=["prediction/2022-1028-0008_multi/depth/multi_depth_Fold_0/logs/epoch_45_iou_0.77"])
+    # parser.add_argument('--network', type=str, 
+    #                     default=[os.path.join(root_folder, f) for f in ["prediction/2022-1028-0008_multi/rgb/multi_rgb_Fold_0/logs/epoch_40_iou_0.67"]])
+    parser.add_argument('--network', type=str, 
+                        default=[os.path.join(root_folder, f) for f in ["prediction/2022-1103-1514_Jacquard/DEPTH/Fold_0/logs/epoch_43_iou_0.93"]])
     parser.add_argument('--network-name', type=str, default='grconvnet3',
                         help='Network name in inference/models')
     parser.add_argument('--input-size', type=int, default=420,
@@ -37,9 +38,9 @@ def parse_args():
                         help='Dataset Name ("cornell" or "jaquard")')
     parser.add_argument('--dataset-path', type=str, default= os.path.join(root_folder, 'cornell_grasp_dataset'),
                         help='Path to dataset')
-    parser.add_argument('--use-depth', type=int, default=0,
+    parser.add_argument('--use-depth', type=int, default=1,
                         help='Use Depth image for evaluation (1/0)')
-    parser.add_argument('--use-rgb', type=int, default=1,
+    parser.add_argument('--use-rgb', type=int, default=0,
                         help='Use RGB image for evaluation (1/0)')
     parser.add_argument('--use-dropout', type=int, default=0,
                         help='Use dropout for training (1/0)')
@@ -129,19 +130,19 @@ if __name__ == '__main__':
         net.eval()
 
         # Load the network
-        # logging.info('Loading Network...')
-        # input_channels = 1 * args.use_depth + 3 * args.use_rgb
-        # net_type = get_network(args.network_name)
-        # net = net_type(
-        #     input_channels=input_channels,
-        #     dropout=args.use_dropout,
-        #     prob=args.dropout_prob,
-        #     channel_size=args.channel_size
-        # )
-        # net = net.to(device)
-        # logging.info('Done')
-        # net.load_state_dict(torch.load(network + '_statedict.pt'))
-        # net.eval()
+        logging.info('Loading Network...')
+        input_channels = 1 * args.use_depth + 3 * args.use_rgb
+        net_type = get_network(args.network_name)
+        net = net_type(
+            input_channels=input_channels,
+            dropout=args.use_dropout,
+            prob=args.dropout_prob,
+            channel_size=args.channel_size
+        )
+        net = net.to(device)
+        logging.info('Done')
+        net.load_state_dict(torch.load(network + '_statedict.pt'))
+        net.eval()
 
         results = {'correct': 0, 'failed': 0}
 
