@@ -21,6 +21,7 @@ class CornellDataset(GraspDatasetBase):
         self.grasp_files = glob.glob(os.path.join(file_path, '*', 'pcd*cpos.txt'))
         self.grasp_files.sort()
         self.length = len(self.grasp_files)
+        # print(os.path.join(file_path, '*', 'pcd*cpos.txt'))
 
         if self.length == 0:
             raise FileNotFoundError('No dataset files found. Check path: {}'.format(file_path))
